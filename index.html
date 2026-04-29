@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HBV Survey · KCPH Research</title>
+<link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:  #152d4a;
+  --blue:  #1e5fa8;
+  --sky:   #3a8fd6;
+  --teal:  #0e7a6e;
+  --gold:  #b5820d;
+  --goldL: #fef8e7;
+  --pale:  #e6f0fa;
+  --paleG: #e6f5f3;
+  --white: #ffffff;
+  --off:   #f7fafd;
+  --text:  #162030;
+  --muted: #4e6278;
+  --border:#c4d6ea;
+  --rad:   12px;
+  --shadow:0 4px 24px rgba(21,45,74,.10);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#eaf3fb;min-height:100vh;color:var(--text)}
+
+/* ── Header ── */
+.hdr{
+  background:linear-gradient(135deg,var(--navy) 0%,#1a4070 55%,var(--blue) 100%);
+  padding:26px 20px 22px;text-align:center;
+  box-shadow:0 4px 28px rgba(21,45,74,.35);
+  position:relative;overflow:hidden;
+}
+.hdr::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M0 0h20v20H0zM20 20h20v20H20z'/%3E%3C/g%3E%3C/svg%3E");
+}
+.hdr-hosp{font-family:'Kantumruy Pro',sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:6px}
+.hdr-title{font-family:'Kantumruy Pro',sans-serif;font-size:clamp(16px,3vw,22px);font-weight:600;color:#fff;line-height:1.35;margin-bottom:4px}
+.hdr-en{font-family:'Crimson Pro',serif;font-style:italic;font-size:14px;color:rgba(255,255,255,.72);margin-bottom:12px}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.28);border-radius:20px;padding:4px 14px;font-size:11px;color:rgba(255,255,255,.85);letter-spacing:1.2px;text-transform:uppercase}
+
+/* ── Progress ── */
+.prog-bar{background:#fff;border-bottom:1px solid var(--border);padding:10px 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.prog-inner{max-width:680px;margin:0 auto}
+.prog-meta{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-bottom:5px;font-family:'Kantumruy Pro',sans-serif}
+.prog-track{height:5px;background:var(--pale);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--sky),var(--blue));border-radius:3px;transition:width .4s ease}
+.dots{display:flex;gap:5px;margin-top:7px;justify-content:center}
+.dot{width:26px;height:5px;border-radius:3px;background:var(--border);transition:.25s}
+.dot.done{background:var(--sky)}
+.dot.active{background:var(--blue)}
+
+/* ── Container ── */
+.wrap{max-width:700px;margin:22px auto;padding:0 14px}
+
+/* ── Intro notice ── */
+.intro{background:var(--goldL);border-left:4px solid var(--gold);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-family:'Kantumruy Pro',sans-serif;font-size:13px;line-height:1.7;color:#5a3a00}
+.intro strong{font-weight:600}
+
+/* ── Section card ── */
+.card{background:#fff;border-radius:var(--rad);box-shadow:var(--shadow);overflow:hidden;display:none}
+.card.active{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.card-head{background:linear-gradient(90deg,var(--navy),var(--blue));padding:16px 22px}
+.sec-label{font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.65);font-family:'DM Sans',sans-serif;margin-bottom:3px}
+.sec-title-kh{font-family:'Kantumruy Pro',sans-serif;font-size:17px;font-weight:600;color:#fff;line-height:1.3}
+.sec-title-en{font-family:'Crimson Pro',serif;font-size:13px;font-style:italic;color:rgba(255,255,255,.68);margin-top:1px}
+.sec-count{font-size:11px;color:rgba(255,255,255,.5);margin-top:4px}
+
+.card-body{padding:22px}
+
+/* ── Question ── */
+.qblock{margin-bottom:24px}
+.qlabel{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+.qnum{background:var(--navy);color:#fff;min-width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+.qtexts{flex:1}
+.qkh{font-family:'Kantumruy Pro',sans-serif;font-size:14px;font-weight:500;line-height:1.5;color:var(--text)}
+.qen{font-family:'Crimson Pro',serif;font-style:italic;font-size:13px;color:var(--muted);line-height:1.4;margin-top:1px}
+.qreq{color:#c0392b;margin-left:2px}
+.qnote{font-family:'Kantumruy Pro',sans-serif;font-size:12px;color:var(--muted);font-style:italic;margin:-2px 0 8px 38px;line-height:1.5}
+.qnote-en{font-family:'Crimson Pro',serif;font-size:11.5px;color:#aaa}
+
+/* ── Options ── */
+.opts{display:flex;flex-direction:column;gap:7px;margin-left:38px}
+.opt{display:flex;align-items:flex-start;gap:9px;padding:9px 13px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;background:var(--off);transition:.18s}
+.opt:hover{border-color:var(--sky);background:var(--pale)}
+.opt input{margin-top:3px;accent-color:var(--blue);flex-shrink:0;width:15px;height:15px}
+.opt-texts{flex:1}
+.opt-kh{font-family:'Kantumruy Pro',sans-serif;font-size:13.5px;line-height:1.4;display:block}
+.opt-en{font-family:'Crimson Pro',serif;font-style:italic;font-size:12px;color:var(--muted);display:block;margin-top:1px}
+.opt.selected{border-color:var(--blue);background:var(--pale)}
+
+.inline-opts{display:flex;gap:8px;flex-wrap:wrap;margin-left:38px}
+.iopt{display:flex;align-items:center;gap:7px;padding:8px 14px;border:1.5px solid var(--border);border-radius:20px;cursor:pointer;background:var(--off);transition:.18s;font-family:'Kantumruy Pro',sans-serif;font-size:13px}
+.iopt:hover{border-color:var(--sky);background:var(--pale)}
+.iopt input{accent-color:var(--blue)}
+.iopt.selected{border-color:var(--blue);background:var(--pale);font-weight:500}
+
+/* ── Text/number inputs ── */
+.inp-wrap{margin-left:38px}
+.inp{width:100%;padding:9px 13px;border:1.5px solid var(--border);border-radius:8px;font-family:'Kantumruy Pro',sans-serif;font-size:14px;background:var(--off);color:var(--text);transition:.18s}
+.inp:focus{outline:none;border-color:var(--blue);background:#fff}
+select.inp{cursor:pointer}
+
+/* ── Knowledge table ── */
+.ktable{width:100%;border-collapse:collapse;font-size:13px}
+.ktable th{background:var(--navy);color:#fff;padding:9px 10px;font-weight:600;font-size:11.5px;text-align:center}
+.ktable th:first-child{text-align:left}
+.ktable td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+.ktable tr:nth-child(even) td{background:#f5faff}
+.ktable tr:hover td{background:#ddeeff}
+.ktable td:not(:first-child){text-align:center;vertical-align:middle}
+.ktable input[type=radio]{accent-color:var(--blue);width:16px;height:16px;cursor:pointer}
+.stmt-kh{font-family:'Kantumruy Pro',sans-serif;font-size:13px;line-height:1.45;display:block}
+.stmt-en{font-family:'Crimson Pro',serif;font-style:italic;font-size:11.5px;color:var(--muted);display:block;margin-top:3px}
+.stmt-note{font-size:10.5px;color:#c0392b;font-style:italic;display:block;margin-top:2px}
+
+/* ── Likert ── */
+.ltable{width:100%;border-collapse:collapse;font-size:13px}
+.ltable th{background:var(--navy);color:#fff;padding:8px 6px;text-align:center;font-size:11px}
+.ltable th:first-child{text-align:left}
+.ltable td{padding:9px 6px;border-bottom:1px solid var(--border);vertical-align:middle}
+.ltable tr:nth-child(even) td{background:#f5faff}
+.ltable td:not(:first-child){text-align:center}
+.ltable input[type=radio]{accent-color:var(--blue);width:15px;height:15px;cursor:pointer}
+.lscale{display:flex;justify-content:space-around;font-size:10.5px;color:var(--muted);font-style:italic;margin-bottom:8px;font-family:'Crimson Pro',serif;padding:0 0 0 38px}
+
+/* ── Info note ── */
+.note-box{background:var(--goldL);border-left:3px solid var(--gold);border-radius:6px;padding:10px 14px;margin-bottom:16px;font-family:'Kantumruy Pro',sans-serif;font-size:12.5px;color:#5a3a00;line-height:1.6}
+
+/* ── Nav ── */
+.nav{display:flex;gap:10px;justify-content:space-between;align-items:center;padding:18px 22px;border-top:1px solid var(--border);background:var(--off)}
+.btn{padding:10px 24px;border-radius:8px;border:none;font-family:'Kantumruy Pro',sans-serif;font-size:13.5px;font-weight:500;cursor:pointer;transition:.18s;display:flex;align-items:center;gap:7px}
+.btn-prev{background:#fff;color:var(--navy);border:1.5px solid var(--border)}
+.btn-prev:hover{border-color:var(--blue);color:var(--blue)}
+.btn-next{background:var(--blue);color:#fff}
+.btn-next:hover{background:var(--navy);transform:translateY(-1px)}
+.btn-sub{background:var(--teal);color:#fff;font-size:14.5px;padding:12px 32px}
+.btn-sub:hover{background:#0a5c52;transform:translateY(-1px)}
+
+/* ── Error ── */
+.err-msg{font-family:'Kantumruy Pro',sans-serif;font-size:12px;color:#c0392b;margin-top:5px;margin-left:38px;display:none}
+.field-err .inp{border-color:#c0392b}
+.field-err .err-msg{display:block}
+
+/* ── Submitting & Thank You ── */
+.overlay{display:none;text-align:center;padding:48px 24px;background:#fff;border-radius:var(--rad);box-shadow:var(--shadow)}
+.overlay.show{display:block}
+.spin{width:42px;height:42px;border:4px solid var(--pale);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ty-icon{font-size:60px;margin-bottom:18px}
+.ty-title{font-family:'Kantumruy Pro',sans-serif;font-size:24px;font-weight:600;color:var(--navy);margin-bottom:10px}
+.ty-body{font-family:'Kantumruy Pro',sans-serif;font-size:14px;color:var(--muted);line-height:1.8;max-width:420px;margin:0 auto 16px}
+.score-box{display:inline-block;background:var(--navy);color:#fff;border-radius:10px;padding:14px 28px;margin:16px 0}
+.score-num{font-family:'Crimson Pro',serif;font-size:44px;font-weight:600;line-height:1}
+.score-lbl{font-size:12px;opacity:.7;margin-top:3px;font-family:'DM Sans',sans-serif}
+.ty-rid{font-size:11px;color:#aaa;font-family:monospace;margin-top:14px}
+
+@media(max-width:580px){
+  .ktable,.ltable{font-size:11.5px}
+  .ktable th,.ltable th{padding:7px 4px;font-size:10px}
+  .ktable td,.ltable td{padding:7px 4px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<div class="hdr">
+  <div class="hdr-hosp">មន្ទីរពេទ្យបង្អែកខេត្តកំពង់ឆ្នាំង · Kampong Chhnang Provincial Hospital</div>
+  <div class="hdr-title">ការចាក់វ៉ាក់សាំងការពារ HBV និងចំណេះដឹងអំពីជំងឺមហារីកថ្លើម</div>
+  <div class="hdr-en">HBV Vaccination & Hepatocellular Carcinoma Knowledge Survey</div>
+  <div class="badge">🔒 សម្ងាត់ &amp; អនាមិក · Confidential &amp; Anonymous</div>
+</div>
+
+<!-- ═══ PROGRESS ═══ -->
+<div class="prog-bar">
+  <div class="prog-inner">
+    <div class="prog-meta">
+      <span id="prog-sec">ផ្នែក ក: ព័ត៌មានប្រជាសាស្ត្រ</span>
+      <span id="prog-pct">0%</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="dots" id="dots"></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="intro" id="intro-box">
+    <strong>📋 មុននឹងចាប់ផ្តើម / Before you begin:</strong><br>
+    កម្រងសំណួរនេះ <strong>អនាមិក</strong> — សូមកុំសរសេរឈ្មោះ។ ការចូលរួមមិនមានផលប៉ះពាល់ណាឡើយចំពោះការងាររបស់លោកអ្នក។<br>
+    <span style="font-size:12px;font-style:italic">This questionnaire is completely anonymous. Participation will not affect your employment. (~15–20 min)</span>
+  </div>
+
+  <form id="hbv-form" novalidate>
+
+    <!-- ════ SECTION A ════ -->
+    <div class="card active" id="sec-A">
+      <div class="card-head">
+        <div class="sec-label">Section A</div>
+        <div class="sec-title-kh">ផ្នែក ក: ព័ត៌មានប្រជាសាស្ត្រ-សង្គម</div>
+        <div class="sec-title-en">Socio-Demographic Information</div>
+        <div class="sec-count">7 questions</div>
+      </div>
+      <div class="card-body">
+
+        <div class="qblock" id="qA1">
+          <div class="qlabel"><span class="qnum">A1</span><div class="qtexts"><div class="qkh">អាយុ (ឆ្នាំ) <span class="qreq">*</span></div><div class="qen">Age (years)</div></div></div>
+          <div class="inp-wrap"><input type="number" class="inp" name="A1" min="18" max="70" placeholder="ឧ. 32" required></div>
+          <div class="err-msg">សូមបំពេញអាយុ / Please enter your age.</div>
+        </div>
+
+        <div class="qblock" id="qA2">
+          <div class="qlabel"><span class="qnum">A2</span><div class="qtexts"><div class="qkh">ភេទ <span class="qreq">*</span></div><div class="qen">Sex</div></div></div>
+          <div class="inline-opts">
+            <label class="iopt"><input type="radio" name="A2" value="ប្រុស / Male" required> <span>ប្រុស / Male</span></label>
+            <label class="iopt"><input type="radio" name="A2" value="ស្រី / Female"> <span>ស្រី / Female</span></label>
+          </div>
+          <div class="err-msg">សូមជ្រើសរើស / Please select.</div>
+        </div>
+
+        <div class="qblock" id="qA3">
+          <div class="qlabel"><span class="qnum">A3</span><div class="qtexts"><div class="qkh">មុខជំនាញ / វិជ្ជាជីវៈ <span class="qreq">*</span></div><div class="qen">Profession</div></div></div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="A3" value="គ្រូពេទ្យ / Doctor" required><div class="opt-texts"><span class="opt-kh">គ្រូពេទ្យ / វេជ្ជបណ្ឌិត</span><span class="opt-en">Doctor / Physician</span></div></label>
+            <label class="opt"><input type="radio" name="A3" value="គិលានុបដ្ឋាក / Nurse"><div class="opt-texts"><span class="opt-kh">គិលានុបដ្ឋាក/យិកា</span><span class="opt-en">Nurse</span></div></label>
+            <label class="opt"><input type="radio" name="A3" value="ឆ្មប / Midwife"><div class="opt-texts"><span class="opt-kh">ឆ្មប</span><span class="opt-en">Midwife</span></div></label>
+            <label class="opt"><input type="radio" name="A3" value="បច្ចេកទេសមន្ទីរពិសោធន៍ / Lab Tech"><div class="opt-texts"><span class="opt-kh">បច្ចេកទេសមន្ទីរពិសោធន៍</span><span class="opt-en">Laboratory Technician</span></div></label>
+            <label class="opt"><input type="radio" name="A3" value="ឱសថការី / Pharmacist"><div class="opt-texts"><span class="opt-kh">ឱសថការី</span><span class="opt-en">Pharmacist</span></div></label>
+            <label class="opt"><input type="radio" name="A3" value="បុគ្គលិករដ្ឋបាល / Admin"><div class="opt-texts"><span class="opt-kh">បុគ្គលិករដ្ឋបាល</span><span class="opt-en">Administrative Staff</span></div></label>
+            <label class="opt"><input type="radio" name="A3" value="បុគ្គលិកគាំទ្រ / Support"><div class="opt-texts"><span class="opt-kh">បុគ្គលិកផ្នែកគាំទ្រ / បោសសម្អាត / សន្តិសុខ</span><span class="opt-en">Support / Housekeeping / Security</span></div></label>
+            <label class="opt"><input type="radio" name="A3" value="ផ្សេងៗ / Other"><div class="opt-texts"><span class="opt-kh">ផ្សេងៗ</span><span class="opt-en">Other</span></div></label>
+          </div>
+          <div class="inp-wrap" style="margin-top:8px"><input type="text" class="inp" name="A3_other" placeholder="ប្រសិនជ្រើស 'ផ្សេងៗ' សូមបញ្ជាក់ / If 'Other', please specify"></div>
+          <div class="err-msg">សូមជ្រើសរើស / Please select.</div>
+        </div>
+
+        <div class="qblock" id="qA4">
+          <div class="qlabel"><span class="qnum">A4</span><div class="qtexts"><div class="qkh">ផ្នែក / វួដ <span class="qreq">*</span></div><div class="qen">Department / Ward</div></div></div>
+          <div class="inp-wrap">
+            <select class="inp" name="A4" required>
+              <option value="">— ជ្រើសរើសផ្នែករបស់អ្នក / Select your department —</option>
+              <option>ស្ត្រីសម្ភព / Maternity</option>
+              <option>វះកាត់ / Surgery</option>
+              <option>បន្ទប់វះកាត់ / Operating Room (OR)</option>
+              <option>គ្រានាមានសម្ប្រសិទ្ធ / Emergency</option>
+              <option>កុមារ / Pediatrics</option>
+              <option>ថែទាំដ៏ស្រដៀង / ICU</option>
+              <option>ឱសថស្ថាន / General Medicine</option>
+              <option>ព្យាបាលក្រៅ / OPD</option>
+              <option>មន្ទីរពិសោធន៍ / Laboratory</option>
+              <option>ឱសថ / Pharmacy</option>
+              <option>រូបភ្លើង / Radiology</option>
+              <option>ធ្មេញ / Dental</option>
+              <option>CSD</option>
+              <option>រដ្ឋបាល / Administration</option>
+              <option>ហិរញ្ញ / Finance</option>
+              <option>ធនធានមនុស្ស / HR</option>
+              <option>បោសសម្អាត / Housekeeping</option>
+              <option>សន្តិសុខ / Security</option>
+              <option>ផ្ទះបាយ / Kitchen</option>
+              <option>ការិយាល័យបច្ចេកទេស / Technical Office</option>
+              <option>ផ្សេងៗ / Other</option>
+            </select>
+          </div>
+          <div class="err-msg">សូមជ្រើសរើស / Please select.</div>
+        </div>
+
+        <div class="qblock" id="qA5">
+          <div class="qlabel"><span class="qnum">A5</span><div class="qtexts"><div class="qkh">បទពិសោធន៍ការងារសរុប (ឆ្នាំ) <span class="qreq">*</span></div><div class="qen">Total years of work experience in healthcare</div></div></div>
+          <div class="inp-wrap"><input type="number" class="inp" name="A5" min="0" max="50" placeholder="ឧ. 8" required></div>
+          <div class="err-msg">សូមបំពេញ / Please enter.</div>
+        </div>
+
+        <div class="qblock" id="qA6">
+          <div class="qlabel"><span class="qnum">A6</span><div class="qtexts"><div class="qkh">រយៈពេលបម្រើការងារនៅ KCPH (ឆ្នាំ) <span class="qreq">*</span></div><div class="qen">Years of employment at KCPH</div></div></div>
+          <div class="inp-wrap"><input type="number" class="inp" name="A6" min="0" max="50" placeholder="ឧ. 3" required></div>
+          <div class="err-msg">សូមបំពេញ / Please enter.</div>
+        </div>
+
+        <div class="qblock" id="qA7">
+          <div class="qlabel"><span class="qnum">A7</span><div class="qtexts"><div class="qkh">កម្រិតវប្បធម៌ <span class="qreq">*</span></div><div class="qen">Highest education level</div></div></div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="A7" value="បរិញ្ញាបត្ររង (២–៣ ឆ្នាំ) / Associate Degree" required><div class="opt-texts"><span class="opt-kh">បរិញ្ញាបត្ររង (២–៣ ឆ្នាំ)</span><span class="opt-en">Associate Degree (2–3 years)</span></div></label>
+            <label class="opt"><input type="radio" name="A7" value="បរិញ្ញាបត្រ / Bachelor's"><div class="opt-texts"><span class="opt-kh">បរិញ្ញាបត្រ</span><span class="opt-en">Bachelor's Degree</span></div></label>
+            <label class="opt"><input type="radio" name="A7" value="បរិញ្ញាបត្រជាន់ខ្ពស់+ / Master's+"><div class="opt-texts"><span class="opt-kh">បរិញ្ញាបត្រជាន់ខ្ពស់ ឬខ្ពស់ជាងនេះ</span><span class="opt-en">Master's Degree or higher</span></div></label>
+            <label class="opt"><input type="radio" name="A7" value="វេជ្ជបណ្ឌិត / MD"><div class="opt-texts"><span class="opt-kh">វេជ្ជបណ្ឌិត (MD) / ឯកទេស</span><span class="opt-en">Medical Doctor (MD) / Specialist</span></div></label>
+          </div>
+          <div class="err-msg">សូមជ្រើសរើស / Please select.</div>
+        </div>
+
+      </div>
+      <div class="nav"><div></div><button type="button" class="btn btn-next" onclick="go('A','B')">ផ្នែក ខ → Next</button></div>
+    </div>
+
+    <!-- ════ SECTION B ════ -->
+    <div class="card" id="sec-B">
+      <div class="card-head">
+        <div class="sec-label">Section B</div>
+        <div class="sec-title-kh">ផ្នែក ខ: ប្រវត្តិចាក់វ៉ាក់សាំង HBV</div>
+        <div class="sec-title-en">HBV Vaccination History</div>
+        <div class="sec-count">8 questions</div>
+      </div>
+      <div class="card-body">
+
+        <div class="qblock" id="qB1">
+          <div class="qlabel"><span class="qnum">B1</span><div class="qtexts"><div class="qkh">តើអ្នកធ្លាប់ចាក់វ៉ាក់សាំង HBV ដែរឬទេ? <span class="qreq">*</span></div><div class="qen">Have you ever received a Hepatitis B vaccine?</div></div></div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="B1" value="ចាក់គ្រប់ (៣ ដូស) / Complete (3 doses)" required><div class="opt-texts"><span class="opt-kh">បាទ/ចាស — ចាក់គ្រប់ (៣ ដូស)</span><span class="opt-en">Yes — complete series (3 doses)</span></div></label>
+            <label class="opt"><input type="radio" name="B1" value="ចាក់មិនគ្រប់ (១–២ ដូស) / Incomplete"><div class="opt-texts"><span class="opt-kh">បាទ/ចាស — ចាក់មិនទាន់គ្រប់ (១–២ ដូស)</span><span class="opt-en">Yes — incomplete (1–2 doses only)</span></div></label>
+            <label class="opt"><input type="radio" name="B1" value="ទេ / No"><div class="opt-texts"><span class="opt-kh">ទេ</span><span class="opt-en">No</span></div></label>
+            <label class="opt"><input type="radio" name="B1" value="មិនដឹង / Don't know"><div class="opt-texts"><span class="opt-kh">មិនដឹង / មិនចាំ</span><span class="opt-en">Don't know / Don't remember</span></div></label>
+          </div>
+          <div class="err-msg">សូមជ្រើសរើស / Please select.</div>
+        </div>
+
+        <div class="qblock">
+          <div class="qlabel"><span class="qnum">B2</span><div class="qtexts"><div class="qkh">ប្រសិនធ្លាប់ចាក់ តើដូសចុងក្រោយនៅពេលណា?</div><div class="qen">If vaccinated, when was your most recent dose?</div></div></div>
+          <div class="qnote">* រំលង ប្រសិនជ្រើស 'ទេ'/'មិនដឹង' ក្នុង B1 <span class="qnote-en">/ Skip if 'No'/'Don't know' in B1</span></div>
+          <div class="inp-wrap"><input type="number" class="inp" name="B2" min="1990" max="2026" placeholder="ឆ្នាំ / Year e.g. 2021"></div>
+        </div>
+
+        <div class="qblock">
+          <div class="qlabel"><span class="qnum">B3</span><div class="qtexts"><div class="qkh">នៅកន្លែងណាដែលអ្នកបានចាក់? (អាចជ្រើសរើសច្រើន)</div><div class="qen">Where did you receive your HBV vaccination? (Check all that apply)</div></div></div>
+          <div class="qnote">* រំលង ប្រសិនមិនដែលចាក់ <span class="qnote-en">/ Skip if never vaccinated</span></div>
+          <div class="opts">
+            <label class="opt"><input type="checkbox" name="B3" value="កំឡុងសិក្សា / During education"><div class="opt-texts"><span class="opt-kh">កំឡុងពេលសិក្សា / វគ្គបណ្តុះបណ្តាល</span><span class="opt-en">During education / training</span></div></label>
+            <label class="opt"><input type="checkbox" name="B3" value="KCPH"><div class="opt-texts"><span class="opt-kh">នៅ KCPH</span><span class="opt-en">At KCPH</span></div></label>
+            <label class="opt"><input type="checkbox" name="B3" value="មូលដ្ឋានសុខាភិបាលរដ្ឋ / Govt facility"><div class="opt-texts"><span class="opt-kh">មូលដ្ឋានសុខាភិបាលរដ្ឋផ្សេងទៀត</span><span class="opt-en">Another government health facility</span></div></label>
+            <label class="opt"><input type="checkbox" name="B3" value="គ្លីនិកឯកជន / Private clinic"><div class="opt-texts"><span class="opt-kh">គ្លីនិកឯកជន</span><span class="opt-en">Private clinic</span></div></label>
+            <label class="opt"><input type="checkbox" name="B3" value="មិនចាំ / Don't remember"><div class="opt-texts"><span class="opt-kh">មិនចាំ</span><span class="opt-en">Don't remember</span></div></label>
+          </div>
+        </div>
+
+        <div class="qblock" id="qB4">
+          <div class="qlabel"><span class="qnum">B4</span><div class="qtexts"><div class="qkh">តើអ្នកមានប័ណ្ណ ឬកំណត់ត្រាចាក់វ៉ាក់សាំង? <span class="qreq">*</span></div><div class="qen">Do you have a vaccination card or written record?</div></div></div>
+          <div class="inline-opts">
+            <label class="iopt"><input type="radio" name="B4" value="មាន / Yes" required> <span>មាន / Yes</span></label>
+            <label class="iopt"><input type="radio" name="B4" value="មិនមាន / No"> <span>មិនមាន / No</span></label>
+            <label class="iopt"><input type="radio" name="B4" value="បាត់ / Lost"> <span>បាត់ / Lost</span></label>
+          </div>
+          <div class="err-msg">សូមជ្រើសរើស / Please select.</div>
+        </div>
+
+        <div class="qblock" id="qB5">
+          <div class="qlabel"><span class="qnum">B5</span><div class="qtexts"><div class="qkh">តើអ្នកធ្លាប់ពិនិត្យ anti-HBs ដើម្បីបញ្ជាក់ប្រសិទ្ធភាពវ៉ាក់សាំង? <span class="qreq">*</span></div><div class="qen">Have you had anti-HBs test to confirm vaccine efficacy?</div></div></div>
+          <div class="inline-opts">
+            <label class="iopt"><input type="radio" name="B5" value="ធ្លាប់ / Yes" required> <span>ធ្លាប់ / Yes</span></label>
+            <label class="iopt"><input type="radio" name="B5" value="មិនធ្លាប់ / No"> <span>មិនធ្លាប់ / No</span></label>
+            <label class="iopt"><input type="radio" name="B5" value="មិនដឹង / Don't know"> <span>មិនដឹង / Don't know</span></label>
+          </div>
+          <div class="err-msg">សូមជ្រើសរើស / Please select.</div>
+        </div>
+
+        <div class="qblock">
+          <div class="qlabel"><span class="qnum">B6</span><div class="qtexts"><div class="qkh">ប្រសិនមិនទាន់ចាក់គ្រប់ តើអ្វីជាមូលហេតុ? (អាចជ្រើសរើសច្រើន)</div><div class="qen">If NOT fully vaccinated, reasons? (Check all that apply)</div></div></div>
+          <div class="qnote">* រំលង ប្រសិនចាក់គ្រប់ ៣ ដូសហើយ <span class="qnote-en">/ Skip if already 3 doses</span></div>
+          <div class="opts">
+            <label class="opt"><input type="checkbox" name="B6" value="មិនដឹងថាត្រូវចាក់ / Didn't know"><div class="opt-texts"><span class="opt-kh">មិនដឹងថាត្រូវចាក់</span><span class="opt-en">Did not know I needed vaccination</span></div></label>
+            <label class="opt"><input type="checkbox" name="B6" value="មិនមានវ៉ាក់សាំង / Not available"><div class="opt-texts"><span class="opt-kh">មិនមានវ៉ាក់សាំងនៅកន្លែងធ្វើការ</span><span class="opt-en">Vaccine not available at workplace</span></div></label>
+            <label class="opt"><input type="checkbox" name="B6" value="ថ្លៃ / Cost"><div class="opt-texts"><span class="opt-kh">ថ្លៃ — ខ្ញុំមិនមានលទ្ធភាព</span><span class="opt-en">Cost — could not afford it</span></div></label>
+            <label class="opt"><input type="checkbox" name="B6" value="ខ្លាចផលប៉ះពាល់ / Fear side effects"><div class="opt-texts"><span class="opt-kh">ខ្លាចផលប៉ះពាល់</span><span class="opt-en">Fear of side effects</span></div></label>
+            <label class="opt"><input type="checkbox" name="B6" value="រវល់/គ្មានពេល / Too busy"><div class="opt-texts"><span class="opt-kh">រវល់ / គ្មានពេល</span><span class="opt-en">Too busy / No time</span></div></label>
+            <label class="opt"><input type="checkbox" name="B6" value="ជឿថាស៊ាំរួច / Already immune"><div class="opt-texts"><span class="opt-kh">ជឿថាខ្លួនឯងស៊ាំរួចហើយ</span><span class="opt-en">Believe already immune</span></div></label>
+            <label class="opt"><input type="checkbox" name="B6" value="គ្មានគោលការណ៍ / No policy"><div class="opt-texts"><span class="opt-kh">គ្មានគោលការណ៍មន្ទីរពេទ្យ</span><span class="opt-en">No hospital policy requiring it</span></div></label>
+          </div>
+        </div>
+
+        <div class="qblock" id="qB7">
+          <div class="qlabel"><span class="qnum">B7</span><div class="qtexts"><div class="qkh">តើអ្នកមានឆន្ទៈចាក់ ឬចាប់ផ្តើមចាក់ HBV នៅពេលនេះ? <span class="qreq">*</span></div><div class="qen">Would you be willing to start/complete HBV vaccination now?</div></div></div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="B7" value="មាន / Yes" required><div class="opt-texts"><span class="opt-kh">មាន</span><span class="opt-en">Yes</span></div></label>
+            <label class="opt"><input type="radio" name="B7" value="មិនមាន / No"><div class="opt-texts"><span class="opt-kh">មិនមាន</span><span class="opt-en">No</span></div></label>
+            <label class="opt"><input type="radio" name="B7" value="N/A — ចាក់គ្រប់ហើយ / Already fully vaccinated"><div class="opt-texts"><span class="opt-kh">N/A — ខ្ញុំបានចាក់គ្រប់រួចហើយ</span><span class="opt-en">N/A — Already fully vaccinated</span></div></label>
+          </div>
+          <div class="err-msg">សូមជ្រើសរើស / Please select.</div>
+        </div>
+
+        <div class="qblock" id="qB8">
+          <div class="qlabel"><span class="qnum">B8</span><div class="qtexts"><div class="qkh">តើ KCPH ធ្លាប់ផ្តល់ HBV ដោយឥតគិតថ្លៃដល់បុគ្គលិក? <span class="qreq">*</span></div><div class="qen">Has KCPH ever offered free HBV vaccination to staff?</div></div></div>
+          <div class="inline-opts">
+            <label class="iopt"><input type="radio" name="B8" value="ធ្លាប់ / Yes" required> <span>ធ្លាប់ / Yes</span></label>
+            <label class="iopt"><input type="radio" name="B8" value="មិនធ្លាប់ / No"> <span>មិនធ្លាប់ / No</span></label>
+            <label class="iopt"><input type="radio" name="B8" value="មិនដឹង / Don't know"> <span>មិនដឹង / Don't know</span></label>
+          </div>
+          <div class="err-msg">សូមជ្រើសរើស / Please select.</div>
+        </div>
+
+      </div>
+      <div class="nav"><button type="button" class="btn btn-prev" onclick="go('B','A')">← ផ្នែក ក</button><button type="button" class="btn btn-next" onclick="go('B','C')">ផ្នែក គ → Next</button></div>
+    </div>
+
+    <!-- ════ SECTION C ════ -->
+    <div class="card" id="sec-C">
+      <div class="card-head">
+        <div class="sec-label">Section C</div>
+        <div class="sec-title-kh">ផ្នែក គ: ការអនុវត្តការពិនិត្យរក HBV</div>
+        <div class="sec-title-en">HBV Screening Practices</div>
+        <div class="sec-count">6 questions</div>
+      </div>
+      <div class="card-body">
+
+        <div class="qblock" id="qC1">
+          <div class="qlabel"><span class="qnum">C1</span><div class="qtexts"><div class="qkh">តើអ្នកធ្លាប់ធ្វើតេស្ត HBsAg ដែរឬទេ? <span class="qreq">*</span></div><div class="qen">Have you ever been tested for Hepatitis B (HBsAg)?</div></div></div>
+          <div class="inline-opts">
+            <label class="iopt"><input type="radio" name="C1" value="ធ្លាប់ / Yes" required> <span>ធ្លាប់ / Yes</span></label>
+            <label class="iopt"><input type="radio" name="C1" value="មិនធ្លាប់ / No"> <span>មិនធ្លាប់ / No</span></label>
+            <label class="iopt"><input type="radio" name="C1" value="មិនដឹង / Don't know"> <span>មិនដឹង / Don't know</span></label>
+          </div>
+          <div class="err-msg">សូមជ្រើសរើស / Please select.</div>
+        </div>
+
+        <div class="qblock">
+          <div class="qlabel"><span class="qnum">C2</span><div class="qtexts"><div class="qkh">ប្រសិនធ្លាប់ តើអ្នកដឹងពីលទ្ធផលដែរឬទេ?</div><div class="qen">If yes, do you know your test result?</div></div></div>
+          <div class="qnote">* រំលង ប្រសិនឆ្លើយ 'មិនធ្លាប់'/'មិនដឹង' ក្នុង C1 <span class="qnote-en">/ Skip if 'No'/'Don't know' in C1</span></div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="C2" value="វិជ្ជមាន (+) HBV / Positive"><div class="opt-texts"><span class="opt-kh">វិជ្ជមាន (+) — ខ្ញុំផ្ទុក HBV</span><span class="opt-en">Positive — I have HBV infection</span></div></label>
+            <label class="opt"><input type="radio" name="C2" value="អវិជ្ជមាន (-) / Negative"><div class="opt-texts"><span class="opt-kh">អវិជ្ជមាន (-) — ខ្ញុំមិនផ្ទុក HBV</span><span class="opt-en">Negative — I do not have HBV</span></div></label>
+            <label class="opt"><input type="radio" name="C2" value="មិនដឹង/មិនចាំ / Don't know result"><div class="opt-texts"><span class="opt-kh">មិនដឹង / មិនចាំលទ្ធផល</span><span class="opt-en">Don't know / Don't remember result</span></div></label>
+          </div>
+        </div>
+
+        <div class="qblock">
+          <div class="qlabel"><span class="qnum">C3</span><div class="qtexts"><div class="qkh">ប្រសិន HBsAg (+) តើអ្នកកំពុងព្យាបាល / តាមដានសុខភាព?</div><div class="qen">If HBsAg-positive, are you receiving treatment or follow-up?</div></div></div>
+          <div class="qnote">* រំលង ប្រសិនមិនមែន HBsAg (+) <span class="qnote-en">/ Skip if not HBsAg-positive</span></div>
+          <div class="inline-opts">
+            <label class="iopt"><input type="radio" name="C3" value="បាទ/ចាស / Yes"> <span>បាទ/ចាស / Yes</span></label>
+            <label class="iopt"><input type="radio" name="C3" value="ទេ / No"> <span>ទេ / No</span></label>
+            <label class="iopt"><input type="radio" name="C3" value="N/A"> <span>N/A</span></label>
+          </div>
+        </div>
+
+        <div class="qblock" id="qC4">
+          <div class="qlabel"><span class="qnum">C4</span><div class="qtexts"><div class="qkh">តើការធ្វើតេស្ត HBsAg ចុងក្រោយរបស់អ្នក? <span class="qreq">*</span></div><div class="qen">When was your most recent HBsAg test?</div></div></div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="C4" value="ក្នុង ១២ ខែចុងក្រោយ / Past 12 months" required><div class="opt-texts"><span class="opt-kh">ក្នុងកំឡុងពេល ១២ ខែចុងក្រោយ</span><span class="opt-en">Within the past 12 months</span></div></label>
+            <label class="opt"><input type="radio" name="C4" value="១–៣ ឆ្នាំមុន / 1–3 years ago"><div class="opt-texts"><span class="opt-kh">១–៣ ឆ្នាំមុន</span><span class="opt-en">1–3 years ago</span></div></label>
+            <label class="opt"><input type="radio" name="C4" value="ច្រើនជាង ៣ ឆ្នាំ / >3 years ago"><div class="opt-texts"><span class="opt-kh">ច្រើនជាង ៣ ឆ្នាំមុន</span><span class="opt-en">More than 3 years ago</span></div></label>
+            <label class="opt"><input type="radio" name="C4" value="មិនដែលធ្វើ / Never tested"><div class="opt-texts"><span class="opt-kh">មិនដែលធ្វើតេស្តសោះ</span><span class="opt-en">Never tested</span></div></label>
+          </div>
+          <div class="err-msg">សូមជ្រើសរើស / Please select.</div>
+        </div>
+
+        <div class="qblock">
+          <div class="qlabel"><span class="qnum">C5</span><div class="qtexts"><div class="qkh">ប្រសិនមិនដែលធ្វើតេស្ត តើអ្វីជាមូលហេតុ? (អាចជ្រើសរើសច្រើន)</div><div class="qen">If NEVER tested, reasons? (Check all that apply)</div></div></div>
+          <div class="qnote">* រំលង ប្រសិនធ្លាប់ធ្វើតេស្ត <span class="qnote-en">/ Skip if previously tested</span></div>
+          <div class="opts">
+            <label class="opt"><input type="checkbox" name="C5" value="មិនដឹងថាគួរតែធ្វើ / Didn't know"><div class="opt-texts"><span class="opt-kh">មិនដឹងថាគួរតែធ្វើតេស្ត</span><span class="opt-en">Did not know I should be tested</span></div></label>
+            <label class="opt"><input type="checkbox" name="C5" value="មិនមានសេវា / Not available"><div class="opt-texts"><span class="opt-kh">មិនមានសេវាធ្វើតេស្ត</span><span class="opt-en">Test not available</span></div></label>
+            <label class="opt"><input type="checkbox" name="C5" value="ថ្លៃ / Cost"><div class="opt-texts"><span class="opt-kh">ថ្លៃ — ខ្ញុំមិនមានលទ្ធភាព</span><span class="opt-en">Cost — could not afford it</span></div></label>
+            <label class="opt"><input type="checkbox" name="C5" value="ខ្លាចលទ្ធផលវិជ្ជមាន / Fear positive"><div class="opt-texts"><span class="opt-kh">ខ្លាចដឹងថាខ្លួនមានលទ្ធផលវិជ្ជមាន</span><span class="opt-en">Fear of finding out positive</span></div></label>
+            <label class="opt"><input type="checkbox" name="C5" value="រវល់/គ្មានពេល / Too busy"><div class="opt-texts"><span class="opt-kh">រវល់ / គ្មានពេល</span><span class="opt-en">Too busy / No time</span></div></label>
+            <label class="opt"><input type="checkbox" name="C5" value="គិតថាមិនប្រឈម / Not at risk"><div class="opt-texts"><span class="opt-kh">គិតថាខ្លួនឯងមិនប្រឈម</span><span class="opt-en">Think I am not at risk</span></div></label>
+          </div>
+        </div>
+
+        <div class="qblock" id="qC6">
+          <div class="qlabel"><span class="qnum">C6</span><div class="qtexts"><div class="qkh">តើអ្នកមានឆន្ទៈទទួលការធ្វើតេស្ត HBsAg ឥតគិតថ្លៃ ដែលផ្តល់ជូនដោយការសិក្សានេះ? <span class="qreq">*</span></div><div class="qen">Willing to have free confidential HBsAg test offered by this study?</div></div></div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="C6" value="មាន / Yes" required><div class="opt-texts"><span class="opt-kh">មាន</span><span class="opt-en">Yes</span></div></label>
+            <label class="opt"><input type="radio" name="C6" value="មិនមាន / No"><div class="opt-texts"><span class="opt-kh">មិនមាន</span><span class="opt-en">No</span></div></label>
+            <label class="opt"><input type="radio" name="C6" value="N/A — ធ្វើតេស្តថ្មីៗ / Already tested recently"><div class="opt-texts"><span class="opt-kh">N/A — ខ្ញុំបានធ្វើតេស្តថ្មីៗ</span><span class="opt-en">N/A — Already tested recently</span></div></label>
+          </div>
+          <div class="err-msg">សូមជ្រើសរើស / Please select.</div>
+        </div>
+
+      </div>
+      <div class="nav"><button type="button" class="btn btn-prev" onclick="go('C','B')">← ផ្នែក ខ</button><button type="button" class="btn btn-next" onclick="go('C','D')">ផ្នែក ឃ → Next</button></div>
+    </div>
+
+    <!-- ════ SECTION D ════ -->
+    <div class="card" id="sec-D">
+      <div class="card-head">
+        <div class="sec-label">Section D</div>
+        <div class="sec-title-kh">ផ្នែក ឃ: ប្រវត្តិការប៉ះពាល់ (ក្នុង ១២ ខែចុងក្រោយ)</div>
+        <div class="sec-title-en">Occupational Exposure History (Past 12 Months)</div>
+        <div class="sec-count">5 questions</div>
+      </div>
+      <div class="card-body">
+        <div class="note-box">ចំណាំ: សូមបញ្ចូល <strong>0</strong> ប្រសិនបើមិនមានការប៉ះពាល់ / <em>Enter 0 if no exposure occurred.</em></div>
+
+        <div class="qblock" id="qD1">
+          <div class="qlabel"><span class="qnum">D1</span><div class="qtexts"><div class="qkh">ចំនួនដងដែលត្រូវបានមុតម្ជុល / ឧបករណ៍មុតស្រួច <span class="qreq">*</span></div><div class="qen">Times experienced needlestick / sharp instrument injury</div></div></div>
+          <div class="inp-wrap"><input type="number" class="inp" name="D1" min="0" max="50" value="0" required></div>
+          <div class="err-msg">សូមបំពេញ / Please enter a number.</div>
+        </div>
+
+        <div class="qblock" id="qD2">
+          <div class="qlabel"><span class="qnum">D2</span><div class="qtexts"><div class="qkh">ចំនួនដងដែលត្រូវបានឈាម / វត្ថុរាវ ខ្ទាតចូលភ្នែក ច្រមុះ ឬមាត់ <span class="qreq">*</span></div><div class="qen">Times blood/body fluid splashed to eyes, nose, or mouth</div></div></div>
+          <div class="inp-wrap"><input type="number" class="inp" name="D2" min="0" max="50" value="0" required></div>
+          <div class="err-msg">សូមបំពេញ / Please enter a number.</div>
+        </div>
+
+        <div class="qblock" id="qD3">
+          <div class="qlabel"><span class="qnum">D3</span><div class="qtexts"><div class="qkh">ចំនួនដងដែលឈាម / វត្ថុរាវ ប៉ះស្បែករបួស <span class="qreq">*</span></div><div class="qen">Times blood/body fluid contacted broken/cracked skin</div></div></div>
+          <div class="inp-wrap"><input type="number" class="inp" name="D3" min="0" max="50" value="0" required></div>
+          <div class="err-msg">សូមបំពេញ / Please enter a number.</div>
+        </div>
+
+        <div class="qblock" id="qD4">
+          <div class="qlabel"><span class="qnum">D4</span><div class="qtexts"><div class="qkh">ប្រសិនជួបប្រទះ តើអ្នកបានរាយការណ៍ដែរឬទេ? <span class="qreq">*</span></div><div class="qen">If exposed, did you report it?</div></div></div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="D4" value="រាយការណ៍ជានិច្ច / Always reported" required><div class="opt-texts"><span class="opt-kh">បាទ/ចាស ខ្ញុំរាយការណ៍ជានិច្ច</span><span class="opt-en">Yes, I always reported it</span></div></label>
+            <label class="opt"><input type="radio" name="D4" value="ម្តងម្កាល / Sometimes"><div class="opt-texts"><span class="opt-kh">ម្តងម្កាល</span><span class="opt-en">Sometimes</span></div></label>
+            <label class="opt"><input type="radio" name="D4" value="មិនដែលរាយការណ៍ / Never reported"><div class="opt-texts"><span class="opt-kh">ទេ ខ្ញុំមិនដែលរាយការណ៍</span><span class="opt-en">No, I never reported it</span></div></label>
+            <label class="opt"><input type="radio" name="D4" value="N/A — គ្មានការប៉ះពាល់ / No exposure"><div class="opt-texts"><span class="opt-kh">N/A — ខ្ញុំមិនដែលជួបប្រទះ</span><span class="opt-en">N/A — No exposure</span></div></label>
+          </div>
+          <div class="err-msg">សូមជ្រើសរើស / Please select.</div>
+        </div>
+
+        <div class="qblock" id="qD5">
+          <div class="qlabel"><span class="qnum">D5</span><div class="qtexts"><div class="qkh">ប្រសិនជួបប្រទះ តើអ្នកបានទទួល PEP ដែរឬទេ? <span class="qreq">*</span></div><div class="qen">If exposed, did you receive post-exposure prophylaxis (PEP)?</div></div></div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="D5" value="ទទួល PEP ជានិច្ច / Always received PEP" required><div class="opt-texts"><span class="opt-kh">បាទ/ចាស ខ្ញុំទទួលបាន PEP ជានិច្ច</span><span class="opt-en">Yes, I always received PEP</span></div></label>
+            <label class="opt"><input type="radio" name="D5" value="ម្តងម្កាល / Sometimes"><div class="opt-texts"><span class="opt-kh">ម្តងម្កាល</span><span class="opt-en">Sometimes</span></div></label>
+            <label class="opt"><input type="radio" name="D5" value="មិនដែលទទួល PEP / Never received"><div class="opt-texts"><span class="opt-kh">ទេ ខ្ញុំមិនដែលទទួល PEP</span><span class="opt-en">No, never received PEP</span></div></label>
+            <label class="opt"><input type="radio" name="D5" value="N/A — គ្មានការប៉ះពាល់ / No exposure"><div class="opt-texts"><span class="opt-kh">N/A — ខ្ញុំមិនដែលជួបប្រទះ</span><span class="opt-en">N/A — No exposure</span></div></label>
+          </div>
+          <div class="err-msg">សូមជ្រើសរើស / Please select.</div>
+        </div>
+
+      </div>
+      <div class="nav"><button type="button" class="btn btn-prev" onclick="go('D','C')">← ផ្នែក គ</button><button type="button" class="btn btn-next" onclick="go('D','E')">ផ្នែក ង → Next</button></div>
+    </div>
+
+    <!-- ════ SECTION E ════ -->
+    <div class="card" id="sec-E">
+      <div class="card-head">
+        <div class="sec-label">Section E</div>
+        <div class="sec-title-kh">ផ្នែក ង: ការវាយតម្លៃចំណេះដឹង</div>
+        <div class="sec-title-en">Knowledge Assessment</div>
+        <div class="sec-count">13 statements</div>
+      </div>
+      <div class="card-body">
+        <div class="note-box">
+          សូមជ្រើស <strong>ត្រឹមត្រូវ / False / មិនដឹង</strong> ក្នុងមួយជួរ — គ្មានចម្លើយខុស ឬត្រូវ<br>
+          <em>Tick ONE: True / False / Don't Know per row — no penalties for wrong answers.</em>
+        </div>
+        <table class="ktable" id="ktbl">
+          <thead><tr>
+            <th style="width:52%">សេចក្តីថ្លែង / Statement</th>
+            <th>ត្រឹម<br>True</th><th>មិនត្រឹម<br>False</th><th>មិនដឹង<br>DK</th>
+          </tr></thead>
+          <tbody id="kbody"></tbody>
+        </table>
+      </div>
+      <div class="nav"><button type="button" class="btn btn-prev" onclick="go('E','D')">← ផ្នែក ឃ</button><button type="button" class="btn btn-next" onclick="go('E','F')">ផ្នែក ច → Next</button></div>
+    </div>
+
+    <!-- ════ SECTION F ════ -->
+    <div class="card" id="sec-F">
+      <div class="card-head">
+        <div class="sec-label">Section F</div>
+        <div class="sec-title-kh">ផ្នែក ច: ឥរិយាបថចំពោះការចាក់វ៉ាក់សាំង</div>
+        <div class="sec-title-en">Attitudes toward HBV Vaccination & HCC Prevention</div>
+        <div class="sec-count">5 statements · 5-point scale</div>
+      </div>
+      <div class="card-body">
+        <div class="lscale">
+          <span>១=មិនយល់ស្របខ្លាំង</span><span>២=មិនយល់ស្រប</span><span>៣=មធ្យម</span><span>៤=យល់ស្រប</span><span>៥=យល់ស្របខ្លាំង</span>
+        </div>
+        <table class="ltable" id="ltbl">
+          <thead><tr>
+            <th style="width:52%">សេចក្តីថ្លែង / Statement</th>
+            <th>១</th><th>២</th><th>៣</th><th>៤</th><th>៥</th>
+          </tr></thead>
+          <tbody id="lbody"></tbody>
+        </table>
+      </div>
+      <div class="nav"><button type="button" class="btn btn-prev" onclick="go('F','E')">← ផ្នែក ង</button><button type="button" class="btn btn-next" onclick="go('F','G')">ផ្នែក ឆ → Next</button></div>
+    </div>
+
+    <!-- ════ SECTION G ════ -->
+    <div class="card" id="sec-G">
+      <div class="card-head">
+        <div class="sec-label">Section G · Final</div>
+        <div class="sec-title-kh">ផ្នែក ឆ: ការយល់ដឹងអំពីគោលនយោបាយ</div>
+        <div class="sec-title-en">Hospital Policy & Program Awareness</div>
+        <div class="sec-count">4 questions</div>
+      </div>
+      <div class="card-body">
+
+        <div class="qblock" id="qG1">
+          <div class="qlabel"><span class="qnum">G1</span><div class="qtexts"><div class="qkh">តើ KCPH មានគោលការណ៍ HBV ជាលាយលក្ខណ៍អក្សរ? <span class="qreq">*</span></div><div class="qen">Does KCPH have a written HBV vaccination policy?</div></div></div>
+          <div class="inline-opts">
+            <label class="iopt"><input type="radio" name="G1" value="មាន / Yes" required> <span>មាន / Yes</span></label>
+            <label class="iopt"><input type="radio" name="G1" value="មិនមាន / No"> <span>មិនមាន / No</span></label>
+            <label class="iopt"><input type="radio" name="G1" value="មិនដឹង / Don't know"> <span>មិនដឹង / Don't know</span></label>
+          </div>
+          <div class="err-msg">សូមជ្រើសរើស / Please select.</div>
+        </div>
+
+        <div class="qblock" id="qG2">
+          <div class="qlabel"><span class="qnum">G2</span><div class="qtexts"><div class="qkh">តើអ្នកដឹងទេ ថាវ៉ាក់សាំង HBV អាចផ្តល់ដោយឥតគិតថ្លៃ? <span class="qreq">*</span></div><div class="qen">Are you aware that HBV vaccines may be available free at KCPH?</div></div></div>
+          <div class="inline-opts">
+            <label class="iopt"><input type="radio" name="G2" value="ដឹង / Yes" required> <span>ដឹង / Yes</span></label>
+            <label class="iopt"><input type="radio" name="G2" value="មិនដឹង / No"> <span>មិនដឹង / No</span></label>
+            <label class="iopt"><input type="radio" name="G2" value="មិនប្រាកដ / Not sure"> <span>មិនប្រាកដ / Not sure</span></label>
+          </div>
+          <div class="err-msg">សូមជ្រើសរើស / Please select.</div>
+        </div>
+
+        <div class="qblock" id="qG3">
+          <div class="qlabel"><span class="qnum">G3</span><div class="qtexts"><div class="qkh">តើអ្នកធ្លាប់ចូលរួមវគ្គ HBV / IPC ក្នុង ១២ ខែចុងក្រោយ? <span class="qreq">*</span></div><div class="qen">Attended any HBV/IPC training in the past 12 months?</div></div></div>
+          <div class="inline-opts">
+            <label class="iopt"><input type="radio" name="G3" value="ធ្លាប់ / Yes" required> <span>ធ្លាប់ / Yes</span></label>
+            <label class="iopt"><input type="radio" name="G3" value="មិនធ្លាប់ / No"> <span>មិនធ្លាប់ / No</span></label>
+          </div>
+          <div class="err-msg">សូមជ្រើសរើស / Please select.</div>
+        </div>
+
+        <div class="qblock" id="qG4">
+          <div class="qlabel"><span class="qnum">G4</span><div class="qtexts"><div class="qkh">តើអ្នកវាយតម្លៃការគាំទ្ររបស់ KCPH ក្នុងការការពារ HBV ដល់បុគ្គលិក? <span class="qreq">*</span></div><div class="qen">How do you rate KCPH's support for protecting staff from HBV?</div></div></div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="G4" value="ល្អឥតខ្ចោះ / Excellent" required><div class="opt-texts"><span class="opt-kh">ល្អឥតខ្ចោះ</span><span class="opt-en">Excellent</span></div></label>
+            <label class="opt"><input type="radio" name="G4" value="ល្អ / Good"><div class="opt-texts"><span class="opt-kh">ល្អ</span><span class="opt-en">Good</span></div></label>
+            <label class="opt"><input type="radio" name="G4" value="មធ្យម / Fair"><div class="opt-texts"><span class="opt-kh">មធ្យម</span><span class="opt-en">Fair</span></div></label>
+            <label class="opt"><input type="radio" name="G4" value="ខ្សោយ / Poor"><div class="opt-texts"><span class="opt-kh">ខ្សោយ</span><span class="opt-en">Poor</span></div></label>
+            <label class="opt"><input type="radio" name="G4" value="ខ្សោយខ្លាំង / Very Poor"><div class="opt-texts"><span class="opt-kh">ខ្សោយខ្លាំង</span><span class="opt-en">Very Poor</span></div></label>
+          </div>
+          <div class="err-msg">សូមជ្រើសរើស / Please select.</div>
+        </div>
+
+      </div>
+      <div class="nav">
+        <button type="button" class="btn btn-prev" onclick="go('G','F')">← ផ្នែក ច</button>
+        <button type="button" class="btn btn-sub" id="sub-btn" onclick="submitForm()">✔ បញ្ជូន / Submit</button>
+      </div>
+    </div>
+
+  </form>
+
+  <!-- Submitting -->
+  <div class="overlay" id="ov-sending">
+    <div class="spin"></div>
+    <p style="font-family:'Kantumruy Pro',sans-serif;color:var(--muted);font-size:14px">កំពុងរក្សាទុក... / Saving your responses…</p>
+  </div>
+
+  <!-- Thank you -->
+  <div class="overlay" id="ov-thanks">
+    <div class="ty-icon">✅</div>
+    <div class="ty-title">អរគុណ! / Thank You!</div>
+    <div class="ty-body">
+      ចម្លើយរបស់អ្នកត្រូវបានរក្សាទុករួចហើយ។ ការចូលរួមរបស់អ្នករួមចំណែកដោយផ្ទាល់ ក្នុងការកែលម្អសុខភាពបុគ្គលិក KCPH។<br>
+      <em>Your responses have been recorded. Thank you for contributing to KCPH staff health research.</em>
+    </div>
+    <div class="score-box">
+      <div class="score-num" id="ty-score">—</div>
+      <div class="score-lbl">ចំណេះដឹង / Knowledge Score (out of 13)</div>
+    </div>
+    <div class="ty-body" style="font-size:13px">
+      ប្រសិនបើមានសំណួរ HBV សូមទំនាក់ទំនង IPC Unit ឬ Dr. Yeap Kong<br>
+      <em>Questions about HBV vaccination? Contact the IPC Unit or Dr. Yeap Kong, Technical Office.</em>
+    </div>
+    <div class="ty-rid" id="ty-rid"></div>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+// ── GAS URL (hardcoded — works on all devices) ──
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxDv1j5YF_zA1DwQbFRDhhncr-lARHioQxNKXc9-3oxPE17KH0K6UacEdYPzfrl0po/exec";
+
+// ── Sections ──
+const SECS = ['A','B','C','D','E','F','G'];
+const SEC_NAMES = {
+  A:'ផ្នែក ក: ព័ត៌មានប្រជាសាស្ត្រ',
+  B:'ផ្នែក ខ: ប្រវត្តិចាក់វ៉ាក់សាំង',
+  C:'ផ្នែក គ: ការពិនិត្យ HBsAg',
+  D:'ផ្នែក ឃ: ការប៉ះពាល់',
+  E:'ផ្នែក ង: ចំណេះដឹង',
+  F:'ផ្នែក ច: ឥរិយាបថ',
+  G:'ផ្នែក ឆ: គោលនយោបាយ'
+};
+
+// ── Build dots ──
+const dotsEl = document.getElementById('dots');
+SECS.forEach(s => {
+  const d = document.createElement('span');
+  d.className = 'dot' + (s==='A'?' active':'');
+  d.title = SEC_NAMES[s];
+  dotsEl.appendChild(d);
+});
+
+function updateProg(sec) {
+  const i = SECS.indexOf(sec);
+  const pct = Math.round((i/SECS.length)*100);
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('prog-pct').textContent = pct+'%';
+  document.getElementById('prog-sec').textContent = SEC_NAMES[sec];
+  document.querySelectorAll('.dot').forEach((d,n) => {
+    d.className = 'dot'+(n<i?' done':n===i?' active':'');
+  });
+}
+
+// ── Knowledge items ──
+const KI = [
+  {id:'E1', kh:'ជំងឺថ្លើមប្រភេទបេ បង្កឡើងដោយវីរុស។', en:'Hepatitis B is caused by a virus.', note:null},
+  {id:'E2', kh:'មេរោគ HBV អាចឆ្លងតាមរយៈការមុតម្ជុល។', en:'HBV can be transmitted through needlestick injuries.', note:null},
+  {id:'E3', kh:'មេរោគ HBV អាចឆ្លងតាមការរួមភេទដោយមិនបានការពារ។', en:'HBV can be transmitted through unprotected sexual intercourse.', note:null},
+  {id:'E4', kh:'មេរោគ HBV អាចឆ្លងពីម្តាយទៅកូនកំឡុងពេលសម្រាល។', en:'HBV can be transmitted from mother to baby during childbirth.', note:null},
+  {id:'E5', kh:'មេរោគ HBV អាចឆ្លងតាមការហូបអាហាររួមគ្នា ឬប្រើប្រាស់សម្ភារៈរួមគ្នា។', en:'HBV can be transmitted by sharing food or utensils.', note:'ចំលើយ: មិនត្រឹមត្រូវ — ការជឿជាំំតែម្ដោងដ៏ចំពេជ្រ / Answer: FALSE — common misconception.'},
+  {id:'E6', kh:'មនុស្សម្នាក់អាចផ្ទុក HBV ដោយមិនចេញរោគសញ្ញាអ្វីទាំងអស់។', en:'A person can have HBV without any symptoms.', note:null},
+  {id:'E7', kh:'វ៉ាក់សាំង HBV មានសុវត្ថិភាព និងប្រសិទ្ធភាពជាង ៩០%។', en:'The HBV vaccine is safe and >90% effective.', note:null},
+  {id:'E8', kh:'HBV (រ៉ាំរ៉ៃ) អាចគ្រប់គ្រងបាន ប៉ុន្តែមិនទាន់មានថ្នាំព្យាបាលឱ្យជាដាច់ទេ។', en:'Chronic HBV has no cure but can be managed with antivirals.', note:null},
+  {id:'E9', kh:'ស្រោមដៃ ម៉ាស់ ការបោះចោលឧបករណ៍មុតស្រួចត្រឹមត្រូវ — អាចបង្ការ HBV ។', en:'Standard precautions (gloves, masks, sharps disposal) can prevent occupational HBV.', note:null},
+  {id:'E10',kh:'HBV រ៉ាំរ៉ៃ អាចបង្កើនហានិភ័យជំងឺមហារីកថ្លើម (HCC)។', en:'Chronic HBV infection can lead to hepatocellular carcinoma (HCC).', note:null},
+  {id:'E11',kh:'ប្រហែល ៨០% នៃករណីមហារីកថ្លើម គឺបង្ករដោយ HBV ឬ HCV ។', en:'~80% of liver cancer cases worldwide are caused by HBV or HCV.', note:null},
+  {id:'E12',kh:'ការចាក់វ៉ាក់សាំង HBV អាចកាត់បន្ថយហានិភ័យជំងឺមហារីកថ្លើម។', en:'HBV vaccination can reduce the risk of liver cancer.', note:null},
+  {id:'E13',kh:'ការតាមដានថ្លើម (អេកូ + AFP) ត្រូវបានណែនាំ សម្រាប់អ្នកផ្ទុក HBV រ៉ាំរ៉ៃ។', en:'Regular liver monitoring (ultrasound + AFP) is recommended for chronic HBV.', note:null},
+];
+const kBody = document.getElementById('kbody');
+KI.forEach((item,i) => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>
+      <span class="stmt-kh">${item.kh}</span>
+      <span class="stmt-en">${item.en}</span>
+      ${item.note ? `<span class="stmt-note">${item.note}</span>` : ''}
+    </td>
+    <td><input type="radio" name="${item.id}" value="ត្រឹមត្រូវ / True" required></td>
+    <td><input type="radio" name="${item.id}" value="មិនត្រឹមត្រូវ / False"></td>
+    <td><input type="radio" name="${item.id}" value="មិនដឹង / Don't Know"></td>`;
+  kBody.appendChild(tr);
+});
+
+// ── Attitude items ──
+const AI = [
+  {id:'F1',kh:'ខ្ញុំជឿថាខ្លួនឯងប្រឈម HBV តាមរយៈការងាររបស់ខ្ញុំ។', en:'I believe I am personally at risk of HBV through my work.'},
+  {id:'F2',kh:'ខ្ញុំជឿថាការចាក់ HBV សំខាន់សម្រាប់សុខភាព និងសុវត្ថិភាពខ្ញុំ។', en:'I believe HBV vaccination is important for my health and safety.'},
+  {id:'F3',kh:'ខ្ញុំនឹងណែនាំអ្នករួមការងារ ឱ្យចាក់ HBV ។', en:'I would recommend HBV vaccination to unvaccinated colleagues.'},
+  {id:'F4',kh:'ខ្ញុំព្រួយបារម្ភ ថា HBV អាចវិវត្តទៅជាមហារីកថ្លើម ប្រសិនមិនបានបង្ការ។', en:'I am concerned HBV could progress to liver cancer if not prevented.'},
+  {id:'F5',kh:'ខ្ញុំជឿថាវ៉ាក់សាំង HBV នៅកម្ពុជា មានសុវត្ថិភាព និងប្រសិទ្ធភាព។', en:'I trust the HBV vaccine in Cambodia is safe and effective.'},
+];
+const lBody = document.getElementById('lbody');
+AI.forEach((item,i) => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><span class="stmt-kh">${item.kh}</span><span class="stmt-en">${item.en}</span></td>
+    ${[1,2,3,4,5].map(v=>`<td><input type="radio" name="${item.id}" value="${v}" required></td>`).join('')}`;
+  lBody.appendChild(tr);
+});
+
+// ── Visual selection ──
+document.addEventListener('change', e => {
+  const inp = e.target;
+  if ((inp.type==='radio'||inp.type==='checkbox') && !inp.closest('table')) {
+    const item = inp.closest('.opt,.iopt');
+    if (!item) return;
+    if (inp.type==='radio') {
+      const group = item.closest('.opts,.inline-opts');
+      if (group) group.querySelectorAll('.opt,.iopt').forEach(el=>el.classList.remove('selected'));
+      item.classList.add('selected');
+    } else {
+      item.classList.toggle('selected', inp.checked);
+    }
+  }
+});
+
+// ── Validate section ──
+function validate(sec) {
+  const card = document.getElementById('sec-'+sec);
+  card.querySelectorAll('.qblock').forEach(q=>q.classList.remove('field-err'));
+  let ok = true;
+  const seen = new Set();
+  card.querySelectorAll('[required]').forEach(inp => {
+    if (seen.has(inp.name)) return;
+    seen.add(inp.name);
+    const qb = inp.closest('.qblock');
+    if (!qb) return;
+    let answered = false;
+    if (inp.type==='radio') answered = !!card.querySelector(`input[type="radio"][name="${inp.name}"]:checked`);
+    else if (inp.type==='number'||inp.type==='text') answered = inp.value.trim()!=='';
+    else if (inp.tagName==='SELECT') answered = inp.value!=='';
+    if (!answered) { qb.classList.add('field-err'); ok=false; }
+  });
+  if (sec==='E') {
+    let all=true;
+    KI.forEach(k=>{ if(!document.querySelector(`input[name="${k.id}"]:checked`)) all=false; });
+    if (!all){ ok=false; alert('សូមឆ្លើយទាំង ១៣ សំណួរ / Please answer all 13 knowledge statements.'); }
+  }
+  if (sec==='F') {
+    let all=true;
+    AI.forEach(a=>{ if(!document.querySelector(`input[name="${a.id}"]:checked`)) all=false; });
+    if (!all){ ok=false; alert('សូមវាយតម្លៃទាំង ៥ / Please rate all 5 attitude statements.'); }
+  }
+  if (!ok && sec!=='E' && sec!=='F') {
+    const first = card.querySelector('.field-err');
+    if (first) first.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  return ok;
+}
+
+function go(from, to) {
+  if (to > from || SECS.indexOf(to) > SECS.indexOf(from)) {
+    if (!validate(from)) return;
+  }
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
+  document.getElementById('sec-'+to).classList.add('active');
+  document.getElementById('intro-box').style.display = to==='A' ? '' : 'none';
+  updateProg(to);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── Collect data ──
+function collect() {
+  const d = {};
+  ['A1','A5','A6','B2','D1','D2','D3'].forEach(n => {
+    const el = document.querySelector(`[name="${n}"]`);
+    d[n] = el ? el.value.trim() : '';
+  });
+  ['A3_other'].forEach(n => {
+    const el = document.querySelector(`[name="${n}"]`);
+    d[n] = el ? el.value.trim() : '';
+  });
+  ['A4'].forEach(n => {
+    const el = document.querySelector(`select[name="${n}"]`);
+    d[n] = el ? el.value : '';
+  });
+  ['A2','A3','A7','B1','B4','B5','B7','B8',
+   'C1','C2','C3','C4','C6','D4','D5','G1','G2','G3','G4'].forEach(n => {
+    const r = document.querySelector(`input[type="radio"][name="${n}"]:checked`);
+    d[n] = r ? r.value : '';
+  });
+  ['B3','B6','C5'].forEach(n => {
+    d[n] = [...document.querySelectorAll(`input[type="checkbox"][name="${n}"]:checked`)].map(c=>c.value);
+  });
+  KI.forEach(k => {
+    const r = document.querySelector(`input[type="radio"][name="${k.id}"]:checked`);
+    d[k.id] = r ? r.value : '';
+  });
+  AI.forEach(a => {
+    const r = document.querySelector(`input[type="radio"][name="${a.id}"]:checked`);
+    d[a.id] = r ? r.value : '';
+  });
+  return d;
+}
+
+// ── Score ──
+function score(d) {
+  const correct = {E1:'ត្រឹមត្រូវ / True',E2:'ត្រឹមត្រូវ / True',E3:'ត្រឹមត្រូវ / True',
+    E4:'ត្រឹមត្រូវ / True',E5:'មិនត្រឹមត្រូវ / False',E6:'ត្រឹមត្រូវ / True',
+    E7:'ត្រឹមត្រូវ / True',E8:'ត្រឹមត្រូវ / True',E9:'ត្រឹមត្រូវ / True',
+    E10:'ត្រឹមត្រូវ / True',E11:'ត្រឹមត្រូវ / True',E12:'ត្រឹមត្រូវ / True',
+    E13:'ត្រឹមត្រូវ / True'};
+  return Object.entries(correct).reduce((s,[k,v]) => s + (d[k]===v?1:0), 0);
+}
+
+// ── Submit ──
+async function submitForm() {
+  if (!validate('G')) return;
+  const data = collect();
+  document.getElementById('hbv-form').style.display = 'none';
+  document.getElementById('intro-box').style.display = 'none';
+  document.getElementById('ov-sending').classList.add('show');
+
+  if (!GAS_URL) {
+    await new Promise(r=>setTimeout(r,1200));
+    showTY(score(data), 'DEMO-'+Date.now());
+    return;
+  }
+
+  const form = new FormData();
+  form.append('payload', JSON.stringify(data));
+  try {
+    await fetch(GAS_URL, {method:'POST', body:form, mode:'no-cors'});
+    showTY(score(data), 'R-'+Date.now());
+  } catch(e) {
+    showTY(score(data), 'R-'+Date.now());
+  }
+}
+
+function showTY(s, rid) {
+  document.getElementById('ov-sending').classList.remove('show');
+  document.getElementById('ov-thanks').classList.add('show');
+  document.getElementById('ty-score').textContent = s;
+  document.getElementById('ty-rid').textContent = 'Response ID: '+rid;
+  document.getElementById('prog-fill').style.width='100%';
+  document.getElementById('prog-pct').textContent='100%';
+  document.getElementById('prog-sec').textContent='បានបញ្ចប់ / Survey Complete';
+  document.querySelectorAll('.dot').forEach(d=>d.className='dot done');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+updateProg('A');
+</script>
+</body>
+</html>
